@@ -235,8 +235,10 @@ export const config = {
      * @param {Array.<String>} specs        List of spec file paths that are to be run
      * @param {Object}         browser      instance of created browser/device session
      */
-    // before: function (capabilities, specs) {
-    // },
+    before: function (capabilities, specs) {
+        global.testData = require('./test/testData' );
+        global.expect = require('chai').expect;
+    },
     /**
      * Runs before a WebdriverIO command gets executed.
      * @param {String} commandName hook command name
@@ -280,11 +282,11 @@ export const config = {
      */
      afterTest: function (test, context, { error, result, duration, passed, retries }) {
         if (!passed) {
+            const now = new Date().toISOString();
             // get current test title and clean it, to use it as file name
             const filename = encodeURIComponent(test.title.replace(/\s+/g, '_'));
-            // build file path
-            const filePath = this.screenshotPath + `ERROR_${filename}.png`;
-            // save screenshot
+
+            const filePath = this.screenshotPath + `ERROR_${filename}_${now}.png`;
             browser.saveScreenshot(filePath);
         }
     },
