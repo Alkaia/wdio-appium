@@ -5,12 +5,11 @@ describe('Dialog', () => {
     let dialog;
 
     // Execute a block of code before every test
-    // beforeEach( async () => {
-    // });
+    beforeEach( async () => {
+        dialog = new Dialog(); 
+    });
 
     it('Verify username and password fields editable', async () => {
-        dialog = new Dialog(); 
-
         await dialog.appBtn.click();
         await dialog.alertDialogBtn.click();
         await dialog.textEntryDialogBtn.click();
@@ -27,14 +26,12 @@ describe('Dialog', () => {
     });
 
     it('Verify username and password fields editable - fail', async () => {
-        dialog = new Dialog(); 
-
         await dialog.appBtn.click();
         await dialog.alertDialogBtn.click();
         await dialog.textEntryDialogBtn.click();
         await dialog.userNameField.addValue("Actual User");
 
-        // fail intentionally to get a nice screenshot
+        // fail intentionally to get the screenshot on error
         expect( await dialog.userNameField.getText()).equal("Actual Userrrrrr");
         await dialog.dialogOkBtn.click();
     });
@@ -47,7 +44,7 @@ describe('Dialog', () => {
 
         await driver.setOrientation('PORTRAIT');
         await driver.back();
-        await driver.saveScreenshot('./screenshots/portrait.png');
+        await driver.saveScreenshot(browser.config.screenshotPath + 'portrait.png');
     });
 
     it('Verify isSelected, isEnabled & isDisplayed', async () => {
@@ -67,12 +64,10 @@ describe('Dialog', () => {
         await dialog.tabsBtn.click();
         await dialog.contentByIdBtn.click();
 
-        let isEnabled, isSelected, isDisplayed;
-
         for (let i = 0; i < 3; i++) {
-            isEnabled = await dialog.tabs[i].isEnabled();
-            isSelected = await dialog.tabs[i].isSelected();
-            isDisplayed = await dialog.tabs[i].isDisplayed();
+            const isEnabled = await dialog.tabs[i].isEnabled();
+            const isSelected = await dialog.tabs[i].isSelected();
+            const isDisplayed = await dialog.tabs[i].isDisplayed();
     
             console.log(`Tab ${i + 1}`)
             console.log('isEnabled:', isEnabled);
@@ -96,23 +91,16 @@ describe('Dialog', () => {
         //dialog.tabsBtn.click();
     });
 
-    it('Verify the repeat alarm options has attribute checked set to true when selected', async ()=>{
-        let isChecked, text;
-
+    it('Verify the repeat alarm options has attribute checked set to true when selected', async () => {
         await dialog.appBtn.click();
         await dialog.alertDialogBtn.click();
         await dialog.repeatAlarmBtn.click();
 
-        text = await dialog._weekdayCheckbox(0).getText();
-        expect(text).equal('Every Monday');
-
-        isChecked = await dialog._weekdayCheckbox(0).getAttribute('checked');
-        expect(isChecked).equal('false');
+        expect(await dialog._weekdayCheckbox(0).getText()).equal('Every Monday');
+        expect(await dialog._weekdayCheckbox(0).getAttribute('checked')).equal('false');
 
         await dialog._weekdayCheckbox(0).click();
-
-        isChecked = await dialog._weekdayCheckbox(0).getAttribute('checked');
-        expect(isChecked).equal('true');
+        expect(await dialog._weekdayCheckbox(0).getAttribute('checked')).equal('true');
     });
 
     // Execute a block of code after every test
